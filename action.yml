@@ -5,6 +5,10 @@ inputs:
     description: 'Token to use to retrieve base file. Needed only on private repositories'
     required: false
     default: ''
+  node-path:
+    description: 'Directory of package.json file (Ex: my-node-dir/)'
+    required: false
+    default: ''
 runs:
   using: 'node12'
   main: 'index.js'

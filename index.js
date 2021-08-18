@@ -10,6 +10,7 @@ try {
   }
 
   const token = core.getInput('token');
+  const nodePath = core.getInput('node-path');
   const headers = {};
   if (token) {
     core.info('Using specified token');
@@ -20,13 +21,13 @@ try {
   const headSha = github.context.payload.pull_request.head.sha;
 
   core.info(`Comparing ${ headSha } to ${ baseSha }`);
-  const baseUrl = `https://raw.githubusercontent.com/${ github.context.repo.owner }/${ github.context.repo.repo }/${ baseSha }/package.json`
+  const baseUrl = `https://raw.githubusercontent.com/${ github.context.repo.owner }/${ github.context.repo.repo }/${ baseSha }/${nodePath}package.json`
 
   fetch(baseUrl, { headers })
     .then(res => res.json())
     .then(res => res.version)
     .then(version => {
-      const localVersion = require(`${ process.env.GITHUB_WORKSPACE }/package.json`).version;
+      const localVersion = require(`${ process.env.GITHUB_WORKSPACE }/${nodePath}package.json`).version;
 
       if (!semver.valid(localVersion)) core.setFailed(`Current version '${ localVersion }' detected as invalid one`);
       if (!semver.gt(localVersion, version)) core.setFailed(`Version '${ localVersion }' wasn't detected as greater than '${ version }'`);
